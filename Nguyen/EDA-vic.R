@@ -39,6 +39,7 @@ view(raw_count)
 NA_perc = NA_count/raw_count*100
 view(NA_perc)
 
+#-------------------------------
 '''NA values visualized'''
 # install.packages("visdat")
 library(visdat)
@@ -57,9 +58,13 @@ dim(one_NA)
 dim(covid_hospitalizations) - dim(one_NA) # number of rows with no NA values
 (dim(covid_hospitalizations) - dim(one_NA))/dim(covid_hospitalizations) *100 # percentage of rows with no NA values
 
-no_NA = covid_hospitalizations[complete.cases(covid_hospitalizations), ]
+# no_NA = covid_hospitalizations[complete.cases(covid_hospitalizations), ]
+# view(no_NA)
 
-view(no_NA)
+# removing columns with >50% of null values
+NA_perc # null values percentage
+df_cleaned_column = subset(covid_hospitalizations, select = -c(pic_percent, ped_percent))
+view(df_cleaned_column)
 
 #------------------------------------------------------------------------------
 # data manipulation with dplyr
