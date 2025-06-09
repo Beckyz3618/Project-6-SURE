@@ -1,5 +1,6 @@
 #------------------------------------------------------------------------------
 # reading and previewing data
+library(dplyr)
 
 library(tidyverse)
 covid_hospitalizations <- read_csv("https://raw.githubusercontent.com/36-SURE/2025/main/data/covid_hospitalizations.csv")
@@ -46,7 +47,8 @@ NA_perc = NA_count/raw_count*100
 view(NA_perc)
 
 #-------------------------------
-'''NA values visualized'''
+####NA values visualized####
+
 # install.packages("visdat")
 library(visdat)
 vis_miss(covid_hospitalizations, warn_large_data = FALSE) # raw df # NA 14.5% missing
@@ -82,24 +84,40 @@ view(skim(df_cleaned_column))
 #------------------------------------------------------------------------------
 # grouping by counties 
 
-df_county = df_cleaned_column |>
-  group_by(county)
+df_county = df_cleaned_column %>%
+  group_by(county) %>%
+  summarise(across(where(is.numeric), ~ mean(.x, na.rm = TRUE)))
 
 view(df_county)
+
+# df_cleaned_column |>
+#   group_by(county) |>
+#   summarise(across(everything(),mean()))
+
+view(df_county)
+
+df %>%
+  group_by(group) %>%
+  summarise(across(everything(), mean))
+
+view(df_county)
+
+# extracting rows with at least one missing value
+view(df_county[!complete.cases(covid_hospitalizations), ])
+view(one_NA)
+
+df_county
 
 # summarise_all(df_county) # look into this
 # view(str(df_county)) # column name, data type, inputs for column # this doesn't seem to be useful
 
 
-summary = summary(df_county)# descriptive stats of all columns
-view(summary)
+county_summary = summary(df_county)# descriptive stats of all columns
+view(county_summary)
 
 
-class(summary)
+class(county_summary)
 class(df_county)
 
-summary_tib = tibble(summary)
-view(summary_tib)
-
-
-
+county_summary_tib = tibble(county_summary)
+view(county_summary_tib)
