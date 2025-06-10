@@ -88,12 +88,13 @@ view(skim(df_cleaned_column))
 
 #------------------------------------------------------------------------------
 # grouping by counties 
-
-vis_miss(df_cleaned_column, warn_large_data = FALSE)
-
 df_county = df_cleaned_column %>%
   group_by(county) %>%
   summarise(across(where(is.numeric), ~ mean(.x, na.rm = TRUE)))
+
+#------------------------------------------------------------------------------
+# cleaning
+vis_miss(df_cleaned_column, warn_large_data = FALSE)
 
 # df_cleaned_column |>
 #   group_by(county) |>
@@ -122,4 +123,4 @@ view(df_with_40_na)
 df_clean = df_cleaned_column[rowMeans(is.na(df_cleaned_column)) < 0.4, ]
 view(df_clean)
 view(count_NA(df_clean))
-
+#------------------------------------------------------------------------------
