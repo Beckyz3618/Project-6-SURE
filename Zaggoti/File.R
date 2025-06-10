@@ -1,5 +1,6 @@
 library(tidyverse)
 library(skimr)
+library(ggplot2)
 covid_hospitalizations <- read_csv("https://raw.githubusercontent.com/36-SURE/2025/main/data/covid_hospitalizations.csv")
 
 skim(covid_hospitalizations)
@@ -23,12 +24,19 @@ ggplot(Allegheny, aes(date, icu_load)) +
        y = "% ICU beds filled by COVID")
 
 
-monthly_peak <- covid_hospitalizations |>
-  mutate(month = as.Date(format(date, "%Y-%m-01"))) |>
-  group_by(county, month) |>
-  summarise(peak_icu = max(icu_load),
-            latitude = first(latitude, na.rm = TRUE),                 
-            groups  = "drop")
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
