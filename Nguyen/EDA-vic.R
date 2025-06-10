@@ -34,16 +34,21 @@ view(skim(covid_hospitalizations))
 
 #------------------------------------------------------------------------------
 # na values
-NA_count = covid_hospitalizations %>% summarise_all(~ sum(is.na(.)))
-print(NA_count, width = Inf)
-view(NA_count)
+
+#NA count function
+count_NA <- function(df) {
+  df %>% summarise_all(~ sum(is.na(.)))}
+# to call use "count_NA(df)"
+
+NA_count_og = count_NA(covid_hospitalizations)
+view(NA_count_og)
 
 # raw covid_hospitalizations 
-raw_count = covid_hospitalizations |> summarise_all(~ n())
-view(raw_count)
+count_og = covid_hospitalizations |> summarise_all(~ n())
+view(count_og)
 
 # percentage of NA values in each column
-NA_perc = NA_count/raw_count*100
+NA_perc = NA_count_og/count_og*100
 view(NA_perc)
 
 #-------------------------------
@@ -84,11 +89,11 @@ view(skim(df_cleaned_column))
 #------------------------------------------------------------------------------
 # grouping by counties 
 
+vis_miss(df_cleaned_column, warn_large_data = FALSE)
+
 df_county = df_cleaned_column %>%
   group_by(county) %>%
   summarise(across(where(is.numeric), ~ mean(.x, na.rm = TRUE)))
-
-view(df_county)
 
 # df_cleaned_column |>
 #   group_by(county) |>
@@ -96,28 +101,25 @@ view(df_county)
 
 view(df_county)
 
-df %>%
-  group_by(group) %>%
-  summarise(across(everything(), mean))
 
-view(df_county)
-
-# extracting rows with at least one missing value
-view(df_county[!complete.cases(covid_hospitalizations), ])
-view(one_NA)
-
-df_county
-
-# summarise_all(df_county) # look into this
-# view(str(df_county)) # column name, data type, inputs for column # this doesn't seem to be useful
+dim(df_cleaned_column)
 
 
-county_summary = summary(df_county)# descriptive stats of all columns
-view(county_summary)
+df_with_60_na <- df_cleaned_column[rowMeans(is.na(df_cleaned_column)) > .6, ]
+view(df_with_60_na)
+dim(df_with_60_na) #7035
+# view(count_NA(df_with_60_na))
 
+# df_with_40_60_na <- df_cleaned_column[rowMeans(is.na(df_cleaned_column)) >= .4 & rowMeans(is.na(df_cleaned_column)) <= .6, ]
+# view(df_with_40_60_na)
+# view(count_NA(df_with_40_60_na))
+# dim(df_with_40_60_na) #730
 
-class(county_summary)
-class(df_county)
+df_with_40_na = df_cleaned_column[rowMeans(is.na(df_cleaned_column)) > .4, ]
+(dim(df_with_60_na)/dim(df_cleaned_column))*100 # 10.44% NA values
+view(df_with_40_na)
 
-county_summary_tib = tibble(county_summary)
-view(county_summary_tib)
+df_clean = df_cleaned_column[rowMeans(is.na(df_cleaned_column)) < 0.4, ]
+view(df_clean)
+view(count_NA(df_clean))
+
