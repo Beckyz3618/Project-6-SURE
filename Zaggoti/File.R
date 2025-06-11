@@ -27,6 +27,40 @@ ggplot(Allegheny, aes(date, icu_load)) +
 
 
 
+covid_clean <- covid_hospitalizations |>
+  filter(!is.na(icu_load), icu_total > 0)          
+
+monthly_peak <- covid_clean |>
+  mutate(month = as.Date(format(date, "%Y-%m-01"))) |>
+  group_by(county, month) |>
+  summarise(
+    peak_icu = max(icu_load),                          
+    latitude = first(latitude),
+    .groups  = "drop"
+  )
+
+
+county_order <- monthly_peak |> 
+  distinct(county, latitude) |>
+  arrange(latitude) |> 
+  pull(county)
+
+
+heat_geo <- ggplot(monthly_peak,
+                   aes(month,
+                       factor(county, levels = county_order),
+                       fill = peak_icu)) +
+  geom_tile() +
+  scale_fill_viridis_c(name = "Monthly peak ICU load",
+                       limits = c(0, 1), labels = scales::percent) +
+  labs(title = "COVID ICU pressure reached SE PA first",
+       x = NULL, y = NULL,
+       subtitle = "Counties ordered south (bottom) to north (top)") +
+  theme_minimal(base_size = 11) +
+  theme(axis.text.y = element_text(size = 6))
+
+heat_geo        
+
 
 
 
