@@ -124,3 +124,22 @@ df_clean = df_cleaned_column[rowMeans(is.na(df_cleaned_column)) < 0.4, ]
 view(df_clean)
 view(count_NA(df_clean))
 #------------------------------------------------------------------------------
+df_covid_icu = df_clean |>
+  select(county, date, covid_icu)
+
+view(df_covid_icu)
+
+vis_miss(df_covid_icu, warn_large_data = FALSE)
+
+
+  group_by(county) |>
+  summarise()
+
+view(df_clean |>
+  group_by(county, date)) |>
+  summarise(count = n())
+  
+  
+  df_county = df_cleaned_column %>%
+    group_by(county) %>%
+    summarise(across(where(is.numeric), ~ mean(.x, na.rm = TRUE)))
