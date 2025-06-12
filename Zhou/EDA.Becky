@@ -1,0 +1,47 @@
+library(tidyverse)
+covid_hospitalizations <- read_csv("https://raw.githubusercontent.com/36-SURE/2025/main/data/covid_hospitalizations.csv")
+
+View(covid_hospitalizations)
+select(covid_hospitalizations)
+spec(covid_hospitalizations)
+
+slice_head(covid_hospitalizations)
+slice_tail(covid_hospitalizations)
+
+covid_hospitalizations |> 
+  ggplot(aes(x = covid_icu, y = icu_avail)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "lm", se = TRUE) + 
+  labs(title = "ICU Availability vs. COVID ICU Patients",
+       x = "COVID ICU Patients",
+       y = "Available ICU Beds")
+
+icu_summary <- covid_hospitalizations |>
+  group_by(county) |>
+  summarize(
+    avg_adult_icu = mean(icu_total, na.rm = TRUE),
+    avg_ped_icu = mean(pic_total, na.rm = TRUE)
+  )
+
+icu_summary <- covid_hospitalizations |>
+  group_by(county) |>
+  summarize(
+    avg_adult_icu = mean(icu_total, na.rm = TRUE),
+    avg_ped_icu = mean(pic_total, na.rm = TRUE)
+  )
+
+summary()
+
+%covid hospitalizations visualization
+
+
+library(tidyverse)
+covid_hospitalizations |> 
+  group_by(date) |> 
+  summarize(avg_covid_patients = mean(covid_patients, na.rm = TRUE)) |> 
+  ggplot(aes(x = date, y = avg_covid_patients)) +
+  geom_line(color = "steelblue") +
+  labs(title = "Average COVID-19 Hospitalizations Over Time (PA Counties)",
+       x = "Date",
+       y = "Avg. COVID-19 Patients Hospitalized")
+
